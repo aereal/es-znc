@@ -31,7 +31,7 @@ var MAPPINGS = {
       },
       "timestamp": {
         "type": "date",
-        "format": "%Y-%m-%d %H:%M:%S",
+        "format": "yyyy-MM-dd'T'HH:mm:ss",
       },
     }
   }
