@@ -5,6 +5,7 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "elasticsearch": "^2.4.3"
+    "elasticsearch": "^2.4.3",
+    "minimist": "^1.1.0"
   }
 }
