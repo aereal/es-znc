@@ -33,6 +33,9 @@ var MAPPINGS = {
         "type": "date",
         "format": "yyyy-MM-dd'T'HH:mm:ss",
       },
+      "channel": {
+        "type": "string",
+      },
     }
   }
 };
