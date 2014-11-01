@@ -3,5 +3,8 @@
   "version": "0.0.0",
   "author": "aereal",
   "license": "MIT",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "elasticsearch": "^2.4.3"
+  }
 }
