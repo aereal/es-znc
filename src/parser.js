@@ -1,24 +1,20 @@
 function Parser () {
-  this.eventPattern = /^\[(\d{2}:\d{2}:\d{2})\]\s*\*{3}\s*(\w+)s:\s*(.+)$/;
-  this.nickChangePattern = /^\[(\d{2}:\d{2}:\d{2})\]\s*\*{3}\s*([a-zA-Z0-9_\-]+) is now known as ([a-zA-Z0-9_\-]+)/;
-  this.privmsgPattern = /^\[(\d{2}:\d{2}:\d{2})\]\s*<([a-zA-Z0-9_\-]+)> (.+)/;
-  this.noticePattern = /^\[(\d{2}:\d{2}:\d{2})\]\s*-([a-zA-Z0-9_\-]+)- (.+)/;
+  this.PATTERN = /^\[(\d{2}:\d{2}:\d{2})\]\s*(?:\*{3}\s*(?:(\w+)s: (\w+) (.+)|(\w+) is now known as (\w+))|(?:<(\w+)>|-(\w+)-)\s*(.+))/;
 }
 Parser.prototype.parseLine = function (line) {
-  var m;
-  if (m = this.eventPattern.exec(line)) {
-    return { timestamp: m[1], type: m[2].toLowerCase(), message: m[3], line: line };
+  var matched = this.PATTERN.exec(line);
+  if (!matched) return { valid: false, line: line };
+  if (matched[7]) { // privmsg
+    return { valid: true, type: 'privmsg', timestamp: matched[1], author: matched[7], body: matched[9] };
+  } else if (matched[8]) { // notice
+    return { valid: true, type: 'notice', timestamp: matched[1], author: matched[8], body: matched[9] };
+  } else if (matched[5] && matched[6]) { // nick change
+    return { valid: true, type: 'nick_change', old_nick: matched[5], new_nick: matched[6] };
+  } else if (matched[2]) { // other events
+    return { valid: true, type: matched[2].toLowerCase(), author: matched[3], body: matched[4] };
+  } else {
+    return { valid: false };
   }
-  if (m = this.nickChangePattern.exec(line)) {
-    return { timestamp: m[1], type: 'nick_change', old_nick: m[2], new_nick: m[3], line: line };
-  }
-  if (m = this.privmsgPattern.exec(line)) {
-    return { timestamp: m[1], type: 'privmsg', author: m[2], message: m[3], line: line };
-  }
-  if (m = this.noticePattern.exec(line)) {
-    return { timestamp: m[1], type: 'notice', author: m[2], message: m[3], line: line };
-  }
-  return { type: 'unknown', line: line };
 };
 Parser.prototype.parse = function (body) {
   return body.split("\n").map(function (line) { return this.parseLine(line) }, this);
